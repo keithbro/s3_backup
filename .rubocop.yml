@@ -1,0 +1,38 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Include:
+    - Rakefile
+    - Capfile
+  Exclude:
+    - Gemfile
+    - bin/**
+    - vendor/**
+    - tmp/**
+    - spec/**/*
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+Metrics/MethodLength:
+  Max: 16
+Metrics/AbcSize:
+  Max: 30
+
+Security/YAMLLoad:
+  Enabled: false
+
+Documentation:
+  Enabled: false

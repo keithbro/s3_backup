@@ -1,0 +1,20 @@
+---
+
+pg_database:
+  host: my_host
+  user: my_user
+  password: pss
+
+s3:
+  aws_access_key_id: XXX
+  aws_secret_access_key: DSLK
+  bucket: my_bucket
+  aws_region: p-southeast-2
+  pg_path: pg_backup
+
+tables:
+  users:
+    columns:
+      name: name
+      email: email
+    exception: '@mycompany.me'

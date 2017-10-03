@@ -15,7 +15,7 @@ module S3Backup
 
     def pg_backup!(database_name)
       require_s3_params
-      Config.requires!(:pg_host, :pg_user, :pg_password, :s3_pg_path, :tables)
+      Config.requires!(:pg_host, :pg_user, :s3_pg_path, :tables)
 
       backup = Pg::Backup.new(database_name)
       backup.now!

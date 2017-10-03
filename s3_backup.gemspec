@@ -15,15 +15,14 @@ Gem::Specification.new do |s|
 
   s.license       = 'MIT'
 
-  s.files         = Dir.glob('{lib,spec}/**/*') + %w[LICENSE README.md Rakefile Gemfile .rspec]
+  s.files         = Dir.glob('{lib,spec}/**/*') + %w[README.md Rakefile Gemfile .rspec]
 
-  s.add_dependency 'fog', ['>= 1.24.0']
-  s.add_dependency 'faker', ['>= 1.4.0']
-  s.add_dependency 'ruby-progressbar'
-  s.add_dependency 'mime-types'
+  s.add_dependency 'fog', '~> 1.41'
+  s.add_dependency 'faker', '~> 1.8'
+  s.add_dependency 'ruby-progressbar', '~> 1.8'
+  s.add_dependency 'mime-types', '~> 3.1'
 
-  s.add_development_dependency 'rake', ['>= 0.9.0']
-  s.add_development_dependency 'pry'
-  s.add_development_dependency 'rspec', ['~> 3.0']
-  s.add_development_dependency 'rubocop', ['~> 0.49']
+  s.add_development_dependency 'pry', '~> 0.10'
+  s.add_development_dependency 'rspec', '~> 3.5'
+  s.add_development_dependency 'rubocop', '~> 0.49'
 end

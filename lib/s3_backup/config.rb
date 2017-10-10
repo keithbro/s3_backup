@@ -1,4 +1,9 @@
-require 'pry'
+begin
+  require 'pry'
+rescue LoadError
+  puts 'Unable to load Pry for s3_backup, skipping'
+end
+
 require 'erb'
 require 'yaml'
 

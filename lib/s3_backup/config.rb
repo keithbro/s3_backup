@@ -1,11 +1,10 @@
-begin
-  require 'pry'
-rescue LoadError
-  puts 'Unable to load Pry for s3_backup, skipping'
-end
+# rubocop:disable Style/RescueModifier
+require 'pry' rescue nil
+# rubocop:enable Style/RescueModifier
 
 require 'erb'
 require 'yaml'
+require 'English'
 
 module S3Backup
   class Config

@@ -23,6 +23,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/FrozenStringLiteralComment:
   Enabled: false
+Style/NumericPredicate:
+  Enabled: false
 
 Metrics/LineLength:
   Max: 120

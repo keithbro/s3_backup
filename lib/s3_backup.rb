@@ -31,6 +31,16 @@ module S3Backup
       import.now!
     end
 
+    def pg_download!(pg_database_name, filename)
+      raise 'Need to be run in a rails project' unless defined?(Rails)
+
+      require_s3_params
+      Config.requires!(:s3_pg_path)
+      file_downloaded = S3Backup::S3.new.download!(pg_database_name, Config.s3_pg_path, filename)
+      abort 'Unable to download file' unless file_downloaded
+      filename
+    end
+
     def redis_backup!
       require_s3_params
       Config.requires!(:redis_dump_path, :s3_redis_path)

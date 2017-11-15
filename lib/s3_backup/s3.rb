@@ -29,7 +29,6 @@ module S3Backup
     end
 
     def download!(database_name, bucket_path, file_path)
-      progress_bar
       prefix = File.join(bucket_path, database_name)
       directory = connection.directories.get(Config.bucket, prefix: prefix)
 
@@ -38,6 +37,9 @@ module S3Backup
       raise "#{database_name} file not found on s3" unless s3_backup_file
 
       file = File.open(file_path, 'wb')
+      puts "File size: #{s3_backup_file.content_length / 1024 / 1024}MB, writing to #{file_path}"
+      progress_bar
+      
       directory.files.get(s3_backup_file.key) do |chunk, remaining_bytes, total_bytes|
         update_progress_bar(total_bytes, remaining_bytes)
         file.write chunk

@@ -1,4 +1,3 @@
-require 'pry'
 require 's3_backup'
 
 namespace :s3_backup do

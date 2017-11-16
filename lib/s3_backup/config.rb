@@ -1,7 +1,3 @@
-# rubocop:disable Style/RescueModifier
-require 'pry' rescue nil
-# rubocop:enable Style/RescueModifier
-
 require 'erb'
 require 'yaml'
 require 'English'

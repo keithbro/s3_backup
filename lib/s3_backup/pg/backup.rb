@@ -17,11 +17,11 @@ module S3Backup
         Obfuscate.new(pg_dump_file.path, obfuscated_file.path).obfuscate_dump!
         puts 'Obfuscation done.'
         puts 'Upload to S3 ...'
-        S3Backup::S3.new.upload!(obfucated_file_name, Config.s3_pg_path, obfuscated_file.path)
+        S3Backup::Storage::S3.new.upload!(obfucated_file_name, Config.s3_pg_path, obfuscated_file.path)
         puts 'Uploaded.'
         puts 'Clean environement.'
         clean_env
-        S3Backup::S3.new.clean!(db_name, Config.s3_pg_path)
+        S3Backup::Storage::S3.new.clean!(db_name, Config.s3_pg_path)
       end
 
       private

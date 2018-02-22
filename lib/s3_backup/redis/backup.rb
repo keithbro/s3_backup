@@ -9,11 +9,11 @@ module S3Backup
         compress_file
         puts 'Compressed.'
         puts 'Upload to S3 ...'
-        S3Backup::S3.new.upload!(compressed_file_name, Config.s3_redis_path, compressed_file.path)
+        S3Backup::Storage::S3.new.upload!(compressed_file_name, Config.s3_redis_path, compressed_file.path)
         puts 'Uploaded.'
         puts 'Clean environement.'
         clean_env
-        S3Backup::S3.new.clean!(base_s3_name, Config.s3_redis_path)
+        S3Backup::Storage::S3.new.clean!(base_s3_name, Config.s3_redis_path)
       end
 
       private

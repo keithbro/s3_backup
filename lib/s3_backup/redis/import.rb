@@ -18,7 +18,7 @@ module S3Backup
         puts 'Stop redis database ...'
         stop_redis_database
         puts 'Downloading redis database ...'
-        S3Backup::S3.new.download!(redis_s3_file_name, Config.s3_redis_path, redis_dump_s3_file.path)
+        S3Backup::Storage::S3.new.download!(redis_s3_file_name, Config.s3_redis_path, redis_dump_s3_file.path)
         umcompress_file
         copy_file
         puts 'Start redis database ...'

@@ -9,7 +9,10 @@ s3:
   aws_access_key_id: XXX
   aws_secret_access_key: DSLK
   bucket: my_bucket
-  aws_region: p-southeast-2
+  aws_region: ap-southeast-2
+  aws_endpoint: https://s3.amazonaws.com
+  stub_responses: true
+  server_side_encryption: AES256
   pg_path: pg_backup
 
 tables:

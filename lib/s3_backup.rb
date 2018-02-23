@@ -1,5 +1,5 @@
 require 's3_backup/config'
-require 's3_backup/s3'
+require 's3_backup/storage/s3'
 
 require 's3_backup/pg/obfuscate'
 require 's3_backup/pg/backup'
@@ -36,7 +36,7 @@ module S3Backup
 
       require_s3_params
       Config.requires!(:s3_pg_path)
-      file_downloaded = S3Backup::S3.new.download!(pg_database_name, Config.s3_pg_path, filename)
+      file_downloaded = S3Backup::Storage::S3.new.download!(pg_database_name, Config.s3_pg_path, filename)
       abort 'Unable to download file' unless file_downloaded
       filename
     end

@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'ruby-progressbar', '~> 1.8'
   s.add_dependency 'mime-types', '>= 1.25'
 
-  s.add_development_dependency 'pry', '~> 0.10'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rubocop', '~> 0.49'
 end

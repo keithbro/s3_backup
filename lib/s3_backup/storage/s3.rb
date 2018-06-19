@@ -84,6 +84,11 @@ module S3Backup
       end
 
       def update_progress_bar(total, remaining)
+        # Somehow remaining can be negative so we handle this by force it to
+        # be zero in this scenario. Without this, progress_bar.progress
+        # will throw an exception.
+        remaining = 0 if remaining < 0
+
         progress_bar.progress = (((total - remaining) * 100) / total).to_i
       end
 

@@ -13,15 +13,13 @@ module S3Backup
         puts 'Starting downloading dump ...'
         dump_database
         puts 'Dump downloaded.'
-        puts 'Starting obfuscation ...'
-        Obfuscate.new(pg_dump_file.path, obfuscated_file.path).obfuscate_dump!
-        puts 'Obfuscation done.'
         puts 'Upload to S3 ...'
-        S3Backup::Storage::S3.new.upload!(obfucated_file_name, Config.s3_pg_path, obfuscated_file.path)
+        S3Backup::Storage::S3.new.upload!(File.basename(pg_dump_file), Config.s3_pg_path, pg_dump_file.path)
         puts 'Uploaded.'
-        puts 'Clean environment.'
+        puts 'Cleaning up environment...'
         clean_env
         S3Backup::Storage::S3.new.clean!(db_name, Config.s3_pg_path)
+        puts 'Done.'
       end
 
       private
@@ -40,17 +38,8 @@ module S3Backup
         @pg_dump_file ||= Tempfile.new(db_name)
       end
 
-      def obfucated_file_name
-        @obfucated_file_name ||= "#{db_name}-#{Time.now.to_i}.gz"
-      end
-
-      def obfuscated_file
-        @obfuscated_file ||= Tempfile.new(obfucated_file_name)
-      end
-
-      def clean_env
+     def clean_env
         pg_dump_file.unlink
-        obfuscated_file.unlink
         ENV['PGPASSWORD'] = ''
       end
 

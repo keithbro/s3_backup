@@ -13,13 +13,11 @@ module S3Backup
       end
 
       def now!
-        puts 'Setup local database ...'
-        setup_local_database
         puts 'Downloading pg database ...'
         S3Backup::Storage::S3.new.download!(pg_database_name, Config.s3_pg_path, pg_dump_s3_file.path)
-        umcompress_file
         puts "Loading data in #{database} ..."
         load_file
+        puts "Cleaning up environment..."
         clean_env
         puts '🍺  Done!'
       end
@@ -30,30 +28,13 @@ module S3Backup
         @pg_dump_s3_file ||= Tempfile.new(pg_database_name + '_compressed')
       end
 
-      def pg_dump_file
-        @pg_dump_file ||= Tempfile.new(pg_database_name)
-      end
-
-      def umcompress_file
-        file = File.open(pg_dump_file.path, 'w')
-
-        Zlib::GzipReader.open(pg_dump_s3_file.path) do |gz|
-          file.write gz.read
-        end
-        file.close
-      end
-
       def load_file
-        `pg_restore -d #{database} < #{pg_dump_file.path}`
-      end
+        `pg_restore -O -c -d #{database} < #{pg_dump_s3_file.path}`
 
-      def setup_local_database
-        Rake::Task['db:drop'].invoke
-        Rake::Task['db:create'].invoke
+        abort "Failed to complete pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def clean_env
-        pg_dump_file.unlink
         pg_dump_s3_file.unlink
       end
 

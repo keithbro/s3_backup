@@ -38,7 +38,7 @@ module S3Backup
         @pg_dump_file ||= Tempfile.new(db_name)
       end
 
-     def clean_env
+      def clean_env
         pg_dump_file.unlink
         ENV['PGPASSWORD'] = ''
       end

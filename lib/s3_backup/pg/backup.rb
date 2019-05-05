@@ -8,7 +8,7 @@ module S3Backup
       end
 
       def now!
-        puts 'Setup environement'
+        puts 'Setup environment'
         set_pg_password_env
         puts 'Starting downloading dump ...'
         dump_database
@@ -19,7 +19,7 @@ module S3Backup
         puts 'Upload to S3 ...'
         S3Backup::Storage::S3.new.upload!(obfucated_file_name, Config.s3_pg_path, obfuscated_file.path)
         puts 'Uploaded.'
-        puts 'Clean environement.'
+        puts 'Clean environment.'
         clean_env
         S3Backup::Storage::S3.new.clean!(db_name, Config.s3_pg_path)
       end
@@ -31,7 +31,7 @@ module S3Backup
       end
 
       def dump_database
-        `pg_dump -Fc -h #{Config.pg_host} -U #{Config.pg_user} -d #{db_name} > #{pg_dump_file.path}`
+        `pg_dump -Z9 -h #{Config.pg_host} -U #{Config.pg_user} -d #{db_name} > #{pg_dump_file.path}`
 
         abort "Failed to complete pg_dump. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end

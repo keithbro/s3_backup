@@ -29,6 +29,11 @@ module S3Backup
       end
 
       def load_file
+        `psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) \
+                  FROM pg_stat_activity \
+                  WHERE pg_stat_activity.datname = '#{database}' \
+                  AND pid <> pg_backend_pid();" #{database}`
+
         `pg_restore -j 2 -O -c -d #{database} < #{pg_dump_s3_file.path}`
 
         abort "Failed to complete pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0

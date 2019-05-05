@@ -14,7 +14,7 @@ module S3Backup
         dump_database
         puts 'Dump downloaded.'
         puts 'Upload to S3 ...'
-        S3Backup::Storage::S3.new.upload!(File.basename(pg_dump_file), Config.s3_pg_path, pg_dump_file.path)
+        S3Backup::Storage::S3.new.upload!(obfucated_file_name, Config.s3_pg_path, pg_dump_file.path)
         puts 'Uploaded.'
         puts 'Cleaning up environment...'
         clean_env
@@ -36,6 +36,10 @@ module S3Backup
 
       def pg_dump_file
         @pg_dump_file ||= Tempfile.new(db_name)
+      end
+
+      def obfucated_file_name
+        @obfucated_file_name ||= "#{db_name}-#{Time.now.to_i}.gz"
       end
 
       def clean_env

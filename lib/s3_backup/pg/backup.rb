@@ -29,9 +29,9 @@ module S3Backup
       end
 
       def dump_database
-        `pg_dump -Fc -h #{Config.pg_host} -U #{Config.pg_user} -d #{db_name} > #{pg_dump_file.path}`
+        `pg_dump -h #{Config.pg_host} -U #{Config.pg_user} -d #{db_name} | gzip > #{pg_dump_file.path}`
 
-        abort "Failed to complete pg_dump. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+        abort "Failed to pg_dump. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def pg_dump_file

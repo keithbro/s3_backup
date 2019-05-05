@@ -15,6 +15,8 @@ module S3Backup
       def now!
         puts 'Downloading pg database ...'
         S3Backup::Storage::S3.new.download!(pg_database_name, Config.s3_pg_path, pg_dump_s3_file.path)
+        puts 'Setup local database ...'
+        setup_local_database
         puts "Loading data in #{database} ..."
         load_file
         puts "Cleaning up environment..."
@@ -29,16 +31,22 @@ module S3Backup
       end
 
       def load_file
+        `gunzip < #{pg_dump_s3_file.path} | psql #{database}`
+        abort "Failed to import DB. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+      end
+
+      def setup_local_database
         `psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) \
                   FROM pg_stat_activity \
                   WHERE pg_stat_activity.datname = '#{database}' \
                   AND pid <> pg_backend_pid();" #{database}`
+        abort "Failed to pg_terminate_backend. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
 
-        abort "Failed to complete pg_terminate_backend. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+        `dropdb #{database}`
+        abort "Failed to dropdb. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
 
-        `pg_restore -j 2 -O -c -d #{database} #{pg_dump_s3_file.path}`
-
-        abort "Failed to pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+        `createdb #{database}`
+        abort "Failed to createdb. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def clean_env

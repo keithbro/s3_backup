@@ -21,7 +21,7 @@ namespace :s3_backup do
     task :download, [:pg_database,:filename] do |_task, args|
       raise 'You need to specify a pg database' unless args[:pg_database]
       filename = args[:filename] || "/tmp/#{pg_database_name}-#{Time.current.strftime('%Y%m%dT%H%M%S')}.sql.gz"
-      
+
       S3Backup.pg_download! args[:pg_database], filename
       puts "Downloaded backup to #{filename}"
     end

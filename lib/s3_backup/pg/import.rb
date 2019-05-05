@@ -36,7 +36,7 @@ module S3Backup
 
         abort "Failed to complete pg_terminate_backend. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
 
-        `pg_restore -j 2 -O -c -d #{database} < #{pg_dump_s3_file.path}`
+        `pg_restore -j 2 -O -c -d #{database} #{pg_dump_s3_file.path}`
 
         abort "Failed to pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end

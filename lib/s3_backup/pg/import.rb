@@ -13,13 +13,13 @@ module S3Backup
       end
 
       def now!
-        puts 'Setup local database ...'
-        setup_local_database
         puts 'Downloading pg database ...'
         S3Backup::Storage::S3.new.download!(pg_database_name, Config.s3_pg_path, pg_dump_s3_file.path)
-        umcompress_file
+        puts 'Setup local database ...'
+        setup_local_database
         puts "Loading data in #{database} ..."
         load_file
+        puts "Cleaning up environment..."
         clean_env
         puts '🍺  Done!'
       end
@@ -30,30 +30,26 @@ module S3Backup
         @pg_dump_s3_file ||= Tempfile.new(pg_database_name + '_compressed')
       end
 
-      def pg_dump_file
-        @pg_dump_file ||= Tempfile.new(pg_database_name)
-      end
-
-      def umcompress_file
-        file = File.open(pg_dump_file.path, 'w')
-
-        Zlib::GzipReader.open(pg_dump_s3_file.path) do |gz|
-          file.write gz.read
-        end
-        file.close
-      end
-
       def load_file
-        `psql -d #{database} -f #{pg_dump_file.path} 2> /dev/null`
+        `gunzip < #{pg_dump_s3_file.path} | psql #{database}`
+        abort "Failed to import DB. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def setup_local_database
-        Rake::Task['db:drop'].invoke
-        Rake::Task['db:create'].invoke
+        `psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) \
+                  FROM pg_stat_activity \
+                  WHERE pg_stat_activity.datname = '#{database}' \
+                  AND pid <> pg_backend_pid();" #{database}`
+        abort "Failed to pg_terminate_backend. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+
+        `dropdb #{database}`
+        abort "Failed to dropdb. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+
+        `createdb #{database}`
+        abort "Failed to createdb. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def clean_env
-        pg_dump_file.unlink
         pg_dump_s3_file.unlink
       end
 

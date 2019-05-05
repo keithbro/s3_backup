@@ -34,9 +34,11 @@ module S3Backup
                   WHERE pg_stat_activity.datname = '#{database}' \
                   AND pid <> pg_backend_pid();" #{database}`
 
+        abort "Failed to complete pg_terminate_backend. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+
         `pg_restore -j 2 -O -c -d #{database} < #{pg_dump_s3_file.path}`
 
-        abort "Failed to complete pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
+        abort "Failed to pg_restore. Return code #{$CHILD_STATUS}" unless $CHILD_STATUS == 0
       end
 
       def clean_env

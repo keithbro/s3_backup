@@ -44,7 +44,7 @@ module S3Backup
       end
 
       def load_file
-        `psql -d #{database} -f #{pg_dump_file.path} 2> /dev/null`
+        `pg_restore -d #{database} < #{pg_dump_file.path}`
       end
 
       def setup_local_database
